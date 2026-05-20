@@ -5,6 +5,7 @@ on:
     branches: [ "main" , "dev" ]
   pull_request:
     branches: [ "main" , "dev" , "V0.1.x" ]
+  workflow_dispatch:  # 支持手动触发
 
 jobs:
   build:
