@@ -192,6 +192,12 @@ func TestParsePureData(t *testing.T) {
 		t.Errorf("Expected empty title, got '%s'", data.Metadata.Title)
 	}
 	
+	// 无元数据时，headers 为 nil
+	if data.Headers != nil {
+		t.Errorf("Expected nil headers for pure VSV, got %v", data.Headers)
+	}
+	
+	// 所有行都是数据
 	if len(data.Rows) != 2 {
 		t.Errorf("Expected 2 rows, got %d", len(data.Rows))
 	}

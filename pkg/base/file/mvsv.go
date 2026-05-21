@@ -84,11 +84,8 @@ func (p *Parser) Parse(filePath string) (*Data, error) {
 	var headers []string
 	if metadata.Field != "" {
 		headers = metadata.GetFieldList()
-	} else if len(rows) > 0 {
-		// 纯 VSV 数据（无元数据），第一行作为 headers
-		headers = rows[0]
-		rows = rows[1:]
 	}
+	// 无元数据时，headers 为 nil，所有行都是数据
 
 	return &Data{
 		Metadata:   metadata,
@@ -113,11 +110,8 @@ func (p *Parser) ParseString(content string) (*Data, error) {
 	var headers []string
 	if metadata.Field != "" {
 		headers = metadata.GetFieldList()
-	} else if len(rows) > 0 {
-		// 纯 VSV 数据（无元数据），第一行作为 headers
-		headers = rows[0]
-		rows = rows[1:]
 	}
+	// 无元数据时，headers 为 nil，所有行都是数据
 
 	return &Data{
 		Metadata:   metadata,
