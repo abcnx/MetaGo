@@ -78,7 +78,17 @@ func (p *Parser) Parse(filePath string) (*Data, error) {
 	metadata := p.parseMetadata(lines)
 
 	// 解析数据区
-	headers, rows := p.parseData(lines)
+	_, rows := p.parseData(lines)
+
+	// 从元数据获取 headers
+	var headers []string
+	if metadata.Field != "" {
+		headers = metadata.GetFieldList()
+	} else if len(rows) > 0 {
+		// 纯 VSV 数据（无元数据），第一行作为 headers
+		headers = rows[0]
+		rows = rows[1:]
+	}
 
 	return &Data{
 		Metadata:   metadata,
@@ -97,7 +107,17 @@ func (p *Parser) ParseString(content string) (*Data, error) {
 	metadata := p.parseMetadata(lines)
 
 	// 解析数据区
-	headers, rows := p.parseData(lines)
+	_, rows := p.parseData(lines)
+
+	// 从元数据获取 headers
+	var headers []string
+	if metadata.Field != "" {
+		headers = metadata.GetFieldList()
+	} else if len(rows) > 0 {
+		// 纯 VSV 数据（无元数据），第一行作为 headers
+		headers = rows[0]
+		rows = rows[1:]
+	}
 
 	return &Data{
 		Metadata:   metadata,
@@ -183,7 +203,6 @@ func getMetadataValue(m map[string]string, zhKey, enKey, defaultValue string) st
 
 // parseData 解析数据区
 func (p *Parser) parseData(lines []string) ([]string, [][]string) {
-	var headers []string
 	var rows [][]string
 
 	for _, line := range lines {
@@ -197,15 +216,11 @@ func (p *Parser) parseData(lines []string) ([]string, [][]string) {
 		// 数据行
 		if strings.Contains(trimmedLine, "|") {
 			values := strings.Split(trimmedLine, "|")
-			if headers == nil {
-				headers = values
-			} else {
-				rows = append(rows, values)
-			}
+			rows = append(rows, values)
 		}
 	}
 
-	return headers, rows
+	return nil, rows
 }
 
 // Serializer MVSV 文件序列化器
